@@ -1,0 +1,46 @@
+.cards-story > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-story > ul > li {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255 255 255 / 6%);
+  overflow: hidden;
+}
+
+.cards-story .cards-story-image {
+  line-height: 0;
+}
+
+.cards-story .cards-story-image img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.cards-story .cards-story-body {
+  margin: 0;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.cards-story .cards-story-body a {
+  margin-top: auto;
+  font-weight: 600;
+}
+
+@media (width >= 900px) {
+  .cards-story > ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

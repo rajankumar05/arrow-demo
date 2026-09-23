@@ -1,0 +1,33 @@
+.columns-stats > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  text-align: center;
+}
+
+.columns-stats .columns-stats-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* the big number is authored as a heading */
+.columns-stats .columns-stats-item h1,
+.columns-stats .columns-stats-item h2,
+.columns-stats .columns-stats-item h3 {
+  margin: 0;
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.columns-stats .columns-stats-item p {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .columns-stats > div {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+}

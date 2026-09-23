@@ -1,0 +1,15 @@
+{
+  "variantName": "columns-stats",
+  "baseBlock": "columns",
+  "visualCharacteristics": {
+    "colorScheme": "accent",
+    "density": "spacious",
+    "purpose": "statistics",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": "One row with three cells; each cell = a large number (heading) + a caption paragraph.",
+  "canonicalModel": "standalone",
+  "options": [],
+  "memberVariantIds": ["columns-stats"],
+  "usage": "Row of statistic counters (big number + caption), typically on an accent-colored section."
+}

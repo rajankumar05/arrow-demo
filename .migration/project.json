@@ -1,0 +1,10 @@
+{
+  "sites": {
+    "arrow-demo": {
+      "previewOrg": "rajankumar05",
+      "previewSite": "arrow-demo",
+      "contentHostUrl": "https://content.da.live/rajankumar05/arrow-demo/",
+      "botProtected": true
+    }
+  }
+}

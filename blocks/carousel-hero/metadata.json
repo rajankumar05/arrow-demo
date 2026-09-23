@@ -1,0 +1,15 @@
+{
+  "variantName": "carousel-hero",
+  "baseBlock": "carousel",
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "spacious",
+    "purpose": "hero-carousel",
+    "imagePattern": "full-bleed-background"
+  },
+  "contentPattern": "Each row is one slide: cell 1 = background image, cell 2 = heading + paragraph + CTA. Numbered indicators and prev/next navigation are generated.",
+  "canonicalModel": "standalone",
+  "options": [],
+  "memberVariantIds": ["carousel-hero"],
+  "usage": "Full-bleed rotating hero banner for landing pages. First slide should carry the LCP image."
+}
