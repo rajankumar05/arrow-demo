@@ -10,11 +10,6 @@ export default function decorate(block) {
       if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-category-image';
       else div.className = 'cards-category-body';
     });
-    // make the whole tile clickable when the body contains a single link
-    const link = li.querySelector('.cards-category-body a');
-    if (link) {
-      li.classList.add('cards-category-linked');
-    }
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));

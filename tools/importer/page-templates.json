@@ -27,7 +27,7 @@
           "id": "section-2-guidance",
           "name": "Guidance / category tiles",
           "selector": ["#container-0e04600504"],
-          "style": null,
+          "style": "centered",
           "blocks": ["cards-category"],
           "defaultContent": ["#container-0e04600504 h2", "#container-0e04600504 p"]
         },

@@ -36,7 +36,7 @@ const PAGE_TEMPLATE = {
   ],
   sections: [
     { id: 'section-1-hero', name: 'Hero carousel', selector: ['#carousel-93d4912ab9'], style: null, blocks: ['carousel-hero'], defaultContent: [] },
-    { id: 'section-2-guidance', name: 'Guidance / category tiles', selector: ['#container-0e04600504'], style: null, blocks: ['cards-category'], defaultContent: ['#container-0e04600504 h2', '#container-0e04600504 p'] },
+    { id: 'section-2-guidance', name: 'Guidance / category tiles', selector: ['#container-0e04600504'], style: 'centered', blocks: ['cards-category'], defaultContent: ['#container-0e04600504 h2', '#container-0e04600504 p'] },
     { id: 'section-3-stories', name: 'Five Years Out / featured stories', selector: ['#container-04f9321bcc'], style: 'dark', blocks: ['cards-story'], defaultContent: ['#container-04f9321bcc h2', '#container-04f9321bcc p'] },
     { id: 'section-4-stats', name: 'Company stats', selector: ['#container-3cb03f99f9'], style: 'accent', blocks: ['columns-stats'], defaultContent: ['#container-3cb03f99f9 h2', '#container-3cb03f99f9 p'] },
     { id: 'section-5-careers', name: 'Careers promo', selector: ['#container-7c76fe84b1', '#container-de5f09d838'], style: null, blocks: ['columns-promo'], defaultContent: [] },
