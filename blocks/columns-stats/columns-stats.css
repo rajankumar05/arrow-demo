@@ -1,33 +1,35 @@
 .columns-stats > div {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  text-align: center;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 48px;
 }
 
 .columns-stats .columns-stats-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-/* the big number is authored as a heading */
+/* big dark number */
 .columns-stats .columns-stats-item h1,
 .columns-stats .columns-stats-item h2,
 .columns-stats .columns-stats-item h3 {
-  margin: 0;
-  font-size: 3rem;
-  line-height: 1;
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  font-size: var(--heading-font-size-xl);
   font-weight: 700;
+  line-height: 1;
+  color: var(--text-color);
+  border-bottom: 3px solid var(--accent-color);
 }
 
 .columns-stats .columns-stats-item p {
   margin: 0;
+  color: var(--text-color);
+  font-size: var(--body-font-size-xs);
 }
 
 @media (width >= 600px) {
   .columns-stats > div {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    gap: 40px 64px;
   }
 }

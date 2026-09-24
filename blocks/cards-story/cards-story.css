@@ -7,40 +7,80 @@
   gap: 24px;
 }
 
+/* each card is a full image with an overlaid content panel */
 .cards-story > ul > li {
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
-  background-color: rgb(255 255 255 / 6%);
-  overflow: hidden;
+  justify-content: flex-end;
+  background-color: var(--dark-color);
 }
 
 .cards-story .cards-story-image {
+  position: absolute;
+  inset: 0;
   line-height: 0;
 }
 
 .cards-story .cards-story-image img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.cards-story .cards-story-body {
-  margin: 0;
-  padding: 20px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
+/* dark gradient so overlaid text stays legible */
+.cards-story .cards-story-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 85%) 0%, rgb(0 0 0 / 45%) 35%, rgb(0 0 0 / 5%) 65%);
 }
 
-.cards-story .cards-story-body a {
+.cards-story .cards-story-body {
+  position: relative;
+  z-index: 1;
+  margin: 0;
   margin-top: auto;
-  font-weight: 600;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #fff;
+}
+
+.cards-story .cards-story-body p {
+  margin: 0;
+  color: #fff;
+  font-size: var(--body-font-size-s);
+  line-height: 1.4;
+}
+
+/* the last paragraph holds the CTA → render as an outlined white button */
+.cards-story .cards-story-body a {
+  align-self: flex-start;
+  padding: 12px 24px;
+  border: 1px solid #fff;
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.cards-story .cards-story-body a:hover {
+  background-color: #fff;
+  color: var(--dark-color);
+  text-decoration: none;
 }
 
 @media (width >= 900px) {
   .cards-story > ul {
     grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .cards-story > ul > li {
+    min-height: 620px;
   }
 }

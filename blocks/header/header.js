@@ -142,6 +142,20 @@ export default async function decorate(block) {
     brandLink.closest('.button-container').className = '';
   }
 
+  // brand row search bar: "All Categories ▾ | Search …" (header chrome)
+  if (navBrand) {
+    const search = document.createElement('form');
+    search.className = 'nav-search';
+    search.setAttribute('role', 'search');
+    search.action = '/en/search';
+    search.innerHTML = `
+      <button type="button" class="nav-search-categories" aria-haspopup="listbox" aria-expanded="false">All Categories</button>
+      <input type="search" name="q" class="nav-search-input" aria-label="Search" placeholder="Search">
+      <button type="submit" class="nav-search-submit" aria-label="Search"></button>
+    `;
+    navBrand.append(search);
+  }
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
@@ -172,6 +186,16 @@ export default async function decorate(block) {
           });
         }
       });
+    }
+  }
+
+  // tools: mark up the cart link with an icon + count badge
+  const navTools = nav.querySelector('.nav-tools');
+  if (navTools) {
+    const cartLink = [...navTools.querySelectorAll('a')].find((a) => /cart/i.test(a.getAttribute('href') || '') || /cart/i.test(a.textContent));
+    if (cartLink) {
+      cartLink.classList.add('nav-cart');
+      cartLink.insertAdjacentHTML('beforeend', '<span class="nav-cart-icon" aria-hidden="true"></span><span class="nav-cart-count">0</span>');
     }
   }
 
