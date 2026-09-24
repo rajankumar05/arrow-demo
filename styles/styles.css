@@ -375,3 +375,49 @@ main .section.centered .default-content-wrapper {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* stats section: white panel, heading + CTA on the left, stat grid on the right */
+main .section.stats {
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 48px 0;
+}
+
+@media (width >= 900px) {
+  main .section.stats > div {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  main .section.stats .default-content-wrapper {
+    margin: 0;
+  }
+
+  main .section.stats .columns-stats-wrapper {
+    margin: 0;
+  }
+}
+
+/* the left column heading + button */
+main .section.stats .default-content-wrapper h2 {
+  font-size: var(--heading-font-size-xl);
+  font-weight: 700;
+  margin-top: 0;
+}
+
+main .section.stats .default-content-wrapper a {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 14px 24px;
+  background-color: var(--accent-color);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+main .section.stats .default-content-wrapper a:hover {
+  background-color: var(--accent-hover-color);
+  text-decoration: none;
+}
