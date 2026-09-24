@@ -329,7 +329,8 @@ header nav .nav-tools .nav-cart-count {
   }
 
   /* utility bar: Businesses/About toggles left, account controls right */
-  header nav .nav-utility {
+  header nav .nav-utility,
+  header nav[aria-expanded='true'] .nav-utility {
     display: flex;
     visibility: visible;
     justify-content: space-between;
@@ -343,39 +344,45 @@ header nav .nav-tools .nav-cart-count {
     display: contents;
   }
 
-  header nav .nav-utility ul {
+  /* the two top-level lists (left toggles, right account controls) */
+  header nav .nav-utility .default-content-wrapper > ul {
     display: flex;
     gap: 24px;
     align-items: center;
   }
 
+  /* left toggle group */
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type {
+    gap: 32px;
+  }
+
   /* left toggles as dropdowns */
-  header nav .nav-utility ul:first-of-type > li.nav-drop {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li.nav-drop {
     position: relative;
-    padding-right: 16px;
+    padding-right: 20px;
     cursor: pointer;
   }
 
-  header nav .nav-utility ul:first-of-type > li.nav-drop::after {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li.nav-drop::after {
     content: '';
     display: inline-block;
     position: absolute;
-    top: 0.4em;
-    right: 2px;
-    transform: rotate(135deg);
-    width: 6px;
-    height: 6px;
+    top: 0.35em;
+    right: 0;
+    transform: rotate(45deg);
+    width: 7px;
+    height: 7px;
     border: 2px solid currentcolor;
-    border-width: 2px 2px 0 0;
+    border-width: 0 2px 2px 0;
   }
 
-  header nav .nav-utility ul:first-of-type > li.nav-drop[aria-expanded='true']::after {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li.nav-drop[aria-expanded='true']::after {
     top: unset;
     bottom: 0.4em;
     transform: rotate(315deg);
   }
 
-  header nav .nav-utility ul:first-of-type > li > ul {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li > ul {
     display: none;
     position: absolute;
     top: 150%;
@@ -387,16 +394,33 @@ header nav .nav-tools .nav-cart-count {
     z-index: 3;
   }
 
-  header nav .nav-utility ul:first-of-type > li[aria-expanded='true'] > ul {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li[aria-expanded='true'] > ul {
     display: block;
   }
 
-  header nav .nav-utility ul:first-of-type > li > ul > li {
+  header nav .nav-utility .default-content-wrapper > ul:first-of-type > li > ul > li {
     padding: 8px 0;
   }
 
+  /* right-side account controls: chevrons on country / EN / USD selectors */
+  header nav .nav-utility .default-content-wrapper > ul:last-of-type > li:nth-child(n+2) a {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  header nav .nav-utility .default-content-wrapper > ul:last-of-type > li:nth-child(n+2) a::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    border: 2px solid currentcolor;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-2px) rotate(45deg);
+  }
+
   /* right-side account controls: Login arrow */
-  header nav .nav-utility ul:last-of-type > li:first-child a::after {
+  header nav .nav-utility .default-content-wrapper > ul:last-of-type > li:first-child a::after {
     content: '';
     display: inline-block;
     width: 14px;
@@ -406,7 +430,7 @@ header nav .nav-tools .nav-cart-count {
   }
 
   /* US flag before the country link */
-  header nav .nav-utility ul:last-of-type > li:nth-child(2) a::before {
+  header nav .nav-utility .default-content-wrapper > ul:last-of-type > li:nth-child(2) a::before {
     content: '';
     display: inline-block;
     width: 20px;
