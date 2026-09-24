@@ -1,0 +1,15 @@
+{
+  "variantName": "cards-category",
+  "baseBlock": "cards",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "category-navigation-tiles",
+    "imagePattern": "image-dominant"
+  },
+  "contentPattern": "Each row is one tile: cell 1 = image, cell 2 = short linked category label overlaid on the image.",
+  "canonicalModel": "standalone",
+  "options": [],
+  "memberVariantIds": ["cards-category"],
+  "usage": "Grid of image-dominant category navigation tiles with a short label overlay."
+}

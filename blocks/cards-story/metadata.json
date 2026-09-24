@@ -1,0 +1,15 @@
+{
+  "variantName": "cards-story",
+  "baseBlock": "cards",
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "comfortable",
+    "purpose": "featured-story-cards",
+    "imagePattern": "image-and-text"
+  },
+  "contentPattern": "Each row is one story card: cell 1 = image, cell 2 = description paragraph + a 'Read more' link.",
+  "canonicalModel": "standalone",
+  "options": [],
+  "memberVariantIds": ["cards-story"],
+  "usage": "Text-rich editorial story cards, typically placed on a dark section."
+}

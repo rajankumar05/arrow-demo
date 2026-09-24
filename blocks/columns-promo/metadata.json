@@ -1,0 +1,15 @@
+{
+  "variantName": "columns-promo",
+  "baseBlock": "columns",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "comfortable",
+    "purpose": "image-text-promo",
+    "imagePattern": "single-image"
+  },
+  "contentPattern": "One row, two cells: cell 1 = image, cell 2 = heading + paragraph + CTA link.",
+  "canonicalModel": "standalone",
+  "options": [],
+  "memberVariantIds": ["columns-promo"],
+  "usage": "Two-column image + text promo with a call to action."
+}

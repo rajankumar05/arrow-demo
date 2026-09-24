@@ -1,0 +1,24 @@
+/*
+ * Arrow.com brand tokens
+ * Extracted from https://www.arrow.com/ (pixel-sampled from rendered capture; site is bot-protected).
+ * Palette: near-black text/chrome (#141314), Arrow blue accent (#0070b0), white background.
+ */
+
+:root {
+  /* colors */
+  --background-color: #fff;
+  --light-color: #f4f4f4;
+  --dark-color: #141314;
+  --text-color: #141314;
+  --link-color: #0070b0;
+  --link-hover-color: #005a8c;
+  --accent-color: #0070b0;
+  --accent-hover-color: #005a8c;
+
+  /* fonts */
+  --body-font-family: roboto, roboto-fallback, sans-serif;
+  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+
+  /* spacing */
+  --nav-height: 64px;
+}
