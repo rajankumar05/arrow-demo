@@ -16,6 +16,18 @@
  * are left as <picture>/<img>; the DM transformer (afterTransform) converts them
  * to carrier anchors afterwards.
  */
+// Business-line tab labels shown beneath the hero (01.–04.), tied to slides by
+// index. The source renders these in a separate Swiper thumbnail nav whose text
+// is split across nested spans that don't extract cleanly, so the stable,
+// well-known Arrow business-line names are emitted here as a 3rd cell per row.
+// The block renders them as the numbered tab navigation.
+const TAB_LABELS = [
+  'Electronic Components',
+  'Enterprise Computing Solutions',
+  'Intelligent Solutions',
+  'Supply Chain Solutions',
+];
+
 export default function parse(element, { document }) {
   // Prefer the real slide wrappers; fall back to the swiper-wrapper's direct
   // children if the class-based query comes up empty on a variant DOM.
@@ -26,7 +38,7 @@ export default function parse(element, { document }) {
 
   const cells = [];
 
-  slides.forEach((slide) => {
+  slides.forEach((slide, idx) => {
     // Cell 1: the slide background image (prefer <picture>, fall back to <img>).
     const picture = slide.querySelector('picture') || slide.querySelector('img');
 
@@ -45,7 +57,8 @@ export default function parse(element, { document }) {
 
     // Only emit a row that has real content.
     if (picture || contentCell.length) {
-      cells.push([picture || '', contentCell.length ? contentCell : '']);
+      const label = TAB_LABELS[idx] || `Slide ${idx + 1}`;
+      cells.push([picture || '', contentCell.length ? contentCell : '', label]);
     }
   });
 

@@ -124,7 +124,12 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['brand', 'sections', 'tools'];
+  // Arrow header has an extra utility row above the brand row. When 4 sections
+  // are authored, the first is the utility bar; otherwise fall back to the
+  // standard brand/sections/tools layout.
+  const classes = nav.children.length >= 4
+    ? ['utility', 'brand', 'sections', 'tools']
+    : ['brand', 'sections', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) section.classList.add(`nav-${c}`);
@@ -149,6 +154,25 @@ export default async function decorate(block) {
         }
       });
     });
+  }
+
+  // utility bar: the first list holds "Businesses"/"About" dropdown toggles
+  const navUtility = nav.querySelector('.nav-utility');
+  if (navUtility) {
+    const utilityDrops = navUtility.querySelector(':scope .default-content-wrapper > ul');
+    if (utilityDrops) {
+      utilityDrops.querySelectorAll(':scope > li').forEach((drop) => {
+        if (drop.querySelector('ul')) {
+          drop.classList.add('nav-drop');
+          drop.setAttribute('aria-expanded', 'false');
+          drop.addEventListener('click', () => {
+            const expanded = drop.getAttribute('aria-expanded') === 'true';
+            utilityDrops.querySelectorAll(':scope > li').forEach((d) => d.setAttribute('aria-expanded', 'false'));
+            drop.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+          });
+        }
+      });
+    }
   }
 
   // hamburger for mobile

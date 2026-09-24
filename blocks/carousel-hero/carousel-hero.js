@@ -47,21 +47,27 @@ export function showSlide(block, slideIndex = 0) {
 
 function bindEvents(block) {
   const slideIndicators = block.querySelector('.carousel-hero-slide-indicators');
-  if (!slideIndicators) return;
-
-  slideIndicators.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const slideIndicator = e.currentTarget.parentElement;
-      showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
+  if (slideIndicators) {
+    slideIndicators.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const slideIndicator = e.currentTarget.parentElement;
+        showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
+      });
     });
-  });
+  }
 
-  block.querySelector('.slide-prev').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
-  });
-  block.querySelector('.slide-next').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
-  });
+  const prev = block.querySelector('.slide-prev');
+  const next = block.querySelector('.slide-next');
+  if (prev) {
+    prev.addEventListener('click', () => {
+      showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
+    });
+  }
+  if (next) {
+    next.addEventListener('click', () => {
+      showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
+    });
+  }
 
   const slideObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -73,13 +79,27 @@ function bindEvents(block) {
   });
 }
 
+/**
+ * Build one slide from a row. Column layout:
+ *   cell 1 = background/side image, cell 2 = heading + paragraph + CTA,
+ *   cell 3 (optional) = tab label used for the numbered navigation.
+ * Returns the tab label text for that slide (falls back to '').
+ */
 function createSlide(row, slideIndex, carouselId) {
   const slide = document.createElement('li');
   slide.dataset.slideIndex = slideIndex;
   slide.setAttribute('id', `carousel-hero-${carouselId}-slide-${slideIndex}`);
   slide.classList.add('carousel-hero-slide');
 
-  row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
+  const columns = [...row.children];
+  // A trailing text-only cell is the tab label — pull it out before building the slide.
+  let label = '';
+  if (columns.length > 2) {
+    const labelCol = columns.pop();
+    label = labelCol.textContent.trim();
+  }
+
+  columns.forEach((column, colIdx) => {
     column.classList.add(`carousel-hero-slide-${colIdx === 0 ? 'image' : 'content'}`);
     slide.append(column);
   });
@@ -89,11 +109,11 @@ function createSlide(row, slideIndex, carouselId) {
     slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));
   }
 
-  return slide;
+  return { slide, label };
 }
 
 let carouselId = 0;
-export default async function decorate(block) {
+export default function decorate(block) {
   carouselId += 1;
   block.setAttribute('id', `carousel-hero-${carouselId}`);
   const rows = block.querySelectorAll(':scope > div');
@@ -109,14 +129,40 @@ export default async function decorate(block) {
   slidesWrapper.classList.add('carousel-hero-slides');
   block.prepend(slidesWrapper);
 
-  let slideIndicators;
+  const labels = [];
+  rows.forEach((row, idx) => {
+    const { slide, label } = createSlide(row, idx, carouselId);
+    labels.push(label);
+    slidesWrapper.append(slide);
+    row.remove();
+  });
+
+  container.append(slidesWrapper);
+  block.prepend(container);
+
   if (!isSingleSlide) {
-    const slideIndicatorsNav = document.createElement('nav');
-    slideIndicatorsNav.setAttribute('aria-label', 'Carousel Slide Controls');
-    slideIndicators = document.createElement('ol');
+    // Numbered, labeled tab navigation (01. Electronic Components, …) with a
+    // prev/next control at the end — mirrors the source hero.
+    const nav = document.createElement('nav');
+    nav.setAttribute('aria-label', 'Carousel Slide Controls');
+    nav.classList.add('carousel-hero-nav');
+
+    const slideIndicators = document.createElement('ol');
     slideIndicators.classList.add('carousel-hero-slide-indicators');
-    slideIndicatorsNav.append(slideIndicators);
-    block.append(slideIndicatorsNav);
+
+    labels.forEach((label, idx) => {
+      const indicator = document.createElement('li');
+      indicator.classList.add('carousel-hero-slide-indicator');
+      indicator.dataset.targetSlide = idx;
+      const num = String(idx + 1).padStart(2, '0');
+      const labelText = label || `Slide ${idx + 1}`;
+      indicator.innerHTML = `<button type="button" aria-label="Show slide ${idx + 1}: ${labelText}">
+          <span class="carousel-hero-indicator-num">${num}.</span>
+          <span class="carousel-hero-indicator-label">${labelText}</span>
+        </button>`;
+      slideIndicators.append(indicator);
+    });
+    nav.append(slideIndicators);
 
     const slideNavButtons = document.createElement('div');
     slideNavButtons.classList.add('carousel-hero-navigation-buttons');
@@ -124,28 +170,12 @@ export default async function decorate(block) {
       <button type="button" class="slide-prev" aria-label="Previous Slide"></button>
       <button type="button" class="slide-next" aria-label="Next Slide"></button>
     `;
+    nav.prepend(slideNavButtons);
 
-    container.append(slideNavButtons);
+    block.append(nav);
   }
 
-  rows.forEach((row, idx) => {
-    const slide = createSlide(row, idx, carouselId);
-    slidesWrapper.append(slide);
-
-    if (slideIndicators) {
-      const indicator = document.createElement('li');
-      indicator.classList.add('carousel-hero-slide-indicator');
-      indicator.dataset.targetSlide = idx;
-      indicator.innerHTML = `<button type="button" aria-label="Show Slide ${idx + 1} of ${rows.length}"></button>`;
-      slideIndicators.append(indicator);
-    }
-    row.remove();
-  });
-
-  container.append(slidesWrapper);
-  block.prepend(container);
-
-  // optimize slide background images; the first slide is the LCP image so load it eagerly
+  // optimize slide images; the first slide is the LCP image so load it eagerly
   block.querySelectorAll('.carousel-hero-slide-image picture > img').forEach((img, idx) => {
     img.closest('picture').replaceWith(
       createOptimizedPicture(img.src, img.alt, idx === 0, [{ width: '1600' }]),
