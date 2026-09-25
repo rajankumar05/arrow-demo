@@ -55,7 +55,8 @@ const DM_BREAKPOINTS = [
 // picture is built: the first image is fetched before its block loads, so the block can't
 // set `sizes` itself without the browser downloading a second file.
 const DM_BLOCK_SIZES = {
-  'carousel-hero': { desktop: '(min-width: 1280px) 607px, (min-width: 900px) 48vw, calc(100vw - 48px)' },
+  // full-bleed from 900px; stacked inside the section padding below that
+  'carousel-hero': { desktop: '(min-width: 900px) 100vw, calc(100vw - 48px)' },
 };
 
 // ---- Canonical helpers (keep in sync with dm-scene7-helpers.js) ----

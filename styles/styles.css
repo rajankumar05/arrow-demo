@@ -342,6 +342,17 @@ main > .section:first-of-type {
   main > .section > div {
     padding: 0 32px;
   }
+
+  /* the desktop header has three rows: utility bar (44px), brand row, sections bar (48px) */
+  header {
+    height: calc(44px + var(--nav-height) + 48px);
+  }
+
+  /* the hero carousel runs edge to edge; its slides keep their text in the content width */
+  main > .section > .carousel-hero-wrapper {
+    max-width: none;
+    padding: 0;
+  }
 }
 
 /* section metadata */
