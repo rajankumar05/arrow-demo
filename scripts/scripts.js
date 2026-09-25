@@ -111,7 +111,7 @@ function appendSource(picture, { type, srcset, media }) {
   picture.append(source);
 }
 
-function renderScene7Picture(src, alt) {
+function renderScene7Picture(src, alt, eager = false) {
   const picture = document.createElement('picture');
   DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
     type: 'image/webp',
@@ -124,37 +124,47 @@ function renderScene7Picture(src, alt) {
     media: bp.media,
   }));
   const img = document.createElement('img');
+  img.loading = eager ? 'eager' : 'lazy';
+  if (eager) img.fetchPriority = 'high';
   img.src = buildScene7Rendition(src, { width: 750, format: 'jpg' });
   img.alt = alt;
-  img.loading = 'lazy';
   picture.append(img);
   return picture;
 }
 
-function renderDmOpenApiPicture(src, alt) {
+function renderDmOpenApiPicture(src, alt, eager = false) {
   const picture = document.createElement('picture');
   DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
     srcset: buildDmOpenApiRendition(src, { width: bp.width }),
     media: bp.media,
   }));
   const img = document.createElement('img');
+  img.loading = eager ? 'eager' : 'lazy';
+  if (eager) img.fetchPriority = 'high';
   img.src = buildDmOpenApiRendition(src, { width: 750 });
   img.alt = alt;
-  img.loading = 'lazy';
   picture.append(img);
   return picture;
 }
 
 function buildDynamicMediaImages(main) {
+  // the first image on the page is the LCP candidate: fetch it now, at high priority,
+  // rather than after the blocks load
+  let first = true;
+  const authoredImg = main.querySelector('img');
   main.querySelectorAll('a').forEach((a) => {
     const match = findDmOnAnchor(a);
     if (!match) return;
 
     const { mode, dmUrl } = match;
     const alt = linkTextToAlt(a.textContent.trim());
+    const eager = first && (!authoredImg
+      // eslint-disable-next-line no-bitwise
+      || !!(a.compareDocumentPosition(authoredImg) & Node.DOCUMENT_POSITION_FOLLOWING));
+    first = false;
     const picture = detectDynamicMediaUrl(dmUrl) === 'scene7'
-      ? renderScene7Picture(dmUrl, alt)
-      : renderDmOpenApiPicture(dmUrl, alt);
+      ? renderScene7Picture(dmUrl, alt, eager)
+      : renderDmOpenApiPicture(dmUrl, alt, eager);
 
     a.classList.remove('button', 'primary', 'secondary');
     if (a.classList.length === 0) a.removeAttribute('class');
