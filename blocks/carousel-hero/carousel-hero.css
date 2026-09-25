@@ -43,9 +43,12 @@
   display: block;
 }
 
+/* stacked (mobile) layout: reserve the image's box so the heading and text below
+   don't jump when the image arrives; the image is cropped to fill it */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
 }
 
@@ -238,6 +241,11 @@
   .carousel-hero .carousel-hero-slide .carousel-hero-slide-image {
     order: 1;
     flex: 1 1 55%;
+  }
+
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
+    height: 100%;
+    aspect-ratio: auto;
   }
 
   .carousel-hero .carousel-hero-nav {
