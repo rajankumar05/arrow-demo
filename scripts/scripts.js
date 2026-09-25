@@ -39,12 +39,24 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
 
 // --- BEGIN DM/Scene7 auto-block (excat-generated) ---
 
+// each source offers a width set capped at its old single width, so no device gets a bigger
+// file; `sizes` lets the browser pick the smallest one that fits
 const DM_BREAKPOINTS = [
-  { media: '(min-width: 600px)', width: 2000 }, // desktop
-  // mobile / fallback (no media): below 600px content sits inside the sections' 24px side
-  // padding, so size the image to that and let the browser pick the smallest file that fits
-  { width: 750, widths: [480, 640, 750], sizes: 'calc(100vw - 48px)' },
+  {
+    name: 'desktop', media: '(min-width: 600px)', width: 2000, widths: [750, 1000, 1500, 2000], sizes: '100vw',
+  },
+  // mobile / fallback (no media): below 600px content sits inside the sections' 24px side padding
+  {
+    name: 'mobile', width: 750, widths: [480, 640, 750], sizes: 'calc(100vw - 48px)',
+  },
 ];
+
+// how wide some blocks render their images, per breakpoint. It has to be known when the
+// picture is built: the first image is fetched before its block loads, so the block can't
+// set `sizes` itself without the browser downloading a second file.
+const DM_BLOCK_SIZES = {
+  'carousel-hero': { desktop: '(min-width: 1280px) 607px, (min-width: 900px) 48vw, calc(100vw - 48px)' },
+};
 
 // ---- Canonical helpers (keep in sync with dm-scene7-helpers.js) ----
 function detectDynamicMediaUrl(urlStr) {
@@ -123,20 +135,14 @@ function buildScene7Srcset(src, bp, format) {
     .join(', ');
 }
 
-function renderScene7Picture(src, alt, eager = false) {
+function renderScene7Picture(src, alt, eager = false, blockSizes = {}) {
   const picture = document.createElement('picture');
-  DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
-    type: 'image/webp',
-    srcset: buildScene7Srcset(src, bp, 'webp'),
-    sizes: bp.widths && bp.sizes,
+  ['webp', 'jpg'].forEach((format) => DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
+    type: format === 'webp' ? 'image/webp' : 'image/jpeg',
+    srcset: buildScene7Srcset(src, bp, format),
+    sizes: blockSizes[bp.name] || bp.sizes,
     media: bp.media,
-  }));
-  DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
-    type: 'image/jpeg',
-    srcset: buildScene7Srcset(src, bp, 'jpg'),
-    sizes: bp.widths && bp.sizes,
-    media: bp.media,
-  }));
+  })));
   const img = document.createElement('img');
   img.loading = eager ? 'eager' : 'lazy';
   if (eager) img.fetchPriority = 'high';
@@ -176,8 +182,10 @@ function buildDynamicMediaImages(main) {
       // eslint-disable-next-line no-bitwise
       || !!(a.compareDocumentPosition(authoredImg) & Node.DOCUMENT_POSITION_FOLLOWING));
     first = false;
+    // blocks aren't decorated yet: the block is the classed div directly in the section
+    const block = a.closest('main > div > div[class]');
     const picture = detectDynamicMediaUrl(dmUrl) === 'scene7'
-      ? renderScene7Picture(dmUrl, alt, eager)
+      ? renderScene7Picture(dmUrl, alt, eager, DM_BLOCK_SIZES[block?.classList[0]])
       : renderDmOpenApiPicture(dmUrl, alt, eager);
 
     a.classList.remove('button', 'primary', 'secondary');
