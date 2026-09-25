@@ -91,6 +91,9 @@ body.appear {
 
 header {
   height: var(--nav-height);
+
+  /* the nav bar's colour, so the space it will fill isn't blank white until it loads */
+  background-color: var(--dark-color);
 }
 
 header .header,

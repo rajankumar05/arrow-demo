@@ -41,7 +41,9 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
 
 const DM_BREAKPOINTS = [
   { media: '(min-width: 600px)', width: 2000 }, // desktop
-  { width: 750 }, // mobile / fallback (no media)
+  // mobile / fallback (no media): below 600px content sits inside the sections' 24px side
+  // padding, so size the image to that and let the browser pick the smallest file that fits
+  { width: 750, widths: [480, 640, 750], sizes: 'calc(100vw - 48px)' },
 ];
 
 // ---- Canonical helpers (keep in sync with dm-scene7-helpers.js) ----
@@ -103,24 +105,36 @@ function linkTextToAlt(linkText) {
 }
 
 // ---- Rendering ----
-function appendSource(picture, { type, srcset, media }) {
+function appendSource(picture, {
+  type, srcset, sizes, media,
+}) {
   const source = document.createElement('source');
   if (type) source.type = type;
   source.srcset = srcset;
+  if (sizes) source.sizes = sizes;
   if (media) source.setAttribute('media', media);
   picture.append(source);
+}
+
+function buildScene7Srcset(src, bp, format) {
+  if (!bp.widths) return buildScene7Rendition(src, { width: bp.width, format });
+  return bp.widths
+    .map((width) => `${buildScene7Rendition(src, { width, format })} ${width}w`)
+    .join(', ');
 }
 
 function renderScene7Picture(src, alt, eager = false) {
   const picture = document.createElement('picture');
   DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
     type: 'image/webp',
-    srcset: buildScene7Rendition(src, { width: bp.width, format: 'webp' }),
+    srcset: buildScene7Srcset(src, bp, 'webp'),
+    sizes: bp.widths && bp.sizes,
     media: bp.media,
   }));
   DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
     type: 'image/jpeg',
-    srcset: buildScene7Rendition(src, { width: bp.width, format: 'jpg' }),
+    srcset: buildScene7Srcset(src, bp, 'jpg'),
+    sizes: bp.widths && bp.sizes,
     media: bp.media,
   }));
   const img = document.createElement('img');
