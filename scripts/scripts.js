@@ -276,6 +276,38 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
+ * Starts the first image on the page (the LCP candidate) when it is one of the site's own
+ * media images: gives it the width set its block needs (the same breakpoints the block uses
+ * for Dynamic Media images) and makes it eager, so it downloads while the page is being
+ * decorated instead of after its block loads. Dynamic Media pictures are handled when built.
+ * @param {Element} main The container element
+ */
+function prepareLcpImage(main) {
+  const img = main.querySelector('img');
+  if (!img || img.loading === 'eager') return;
+  const picture = img.closest('picture');
+  const url = new URL(img.getAttribute('src') || '', window.location.href);
+  const block = img.closest('main > div > div[class]');
+  const breakpoints = DM_BLOCK_BREAKPOINTS[block?.classList[0]];
+  if (picture && breakpoints && url.origin === window.location.origin
+    && url.pathname.includes('/media_')) {
+    picture.querySelectorAll('source').forEach((source) => source.remove());
+    breakpoints.forEach((bp) => {
+      const source = document.createElement('source');
+      source.type = 'image/webp';
+      source.srcset = bp.widths
+        .map((width) => `${url.pathname}?width=${width}&format=webply&optimize=medium ${width}w`)
+        .join(', ');
+      source.sizes = bp.sizes;
+      if (bp.media) source.setAttribute('media', bp.media);
+      img.before(source);
+    });
+  }
+  img.loading = 'eager';
+  img.fetchPriority = 'high';
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -300,6 +332,7 @@ function buildAutoBlocks(main) {
     }
     buildWidgetAutoBlocks(main);
     buildDynamicMediaImages(main);
+    prepareLcpImage(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
