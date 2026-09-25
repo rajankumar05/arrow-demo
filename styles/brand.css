@@ -16,8 +16,8 @@
   --accent-hover-color: #005a8c;
 
   /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  --body-font-family: 'Red Hat Text', red-hat-text-fallback, sans-serif;
+  --heading-font-family: 'Red Hat Text', red-hat-text-heading-fallback, sans-serif;
 
   /* spacing */
   --nav-height: 64px;

@@ -24,8 +24,8 @@
   --accent-hover-color: #005a8c;
 
   /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  --body-font-family: 'Red Hat Text', red-hat-text-fallback, sans-serif;
+  --heading-font-family: 'Red Hat Text', red-hat-text-heading-fallback, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -44,16 +44,17 @@
   --nav-height: 64px;
 }
 
-/* fallback fonts */
+/* fallback fonts: Arial scaled to Red Hat Text's width (measured) so text doesn't
+   shift when the web font loads */
 @font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
+  font-family: red-hat-text-heading-fallback;
+  size-adjust: 84.5%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
+  font-family: red-hat-text-fallback;
+  size-adjust: 88.16%;
   src: local('Arial');
 }
 
@@ -113,6 +114,7 @@ h6 {
   font-family: var(--heading-font-family);
   font-weight: 600;
   line-height: 1.25;
+  letter-spacing: -0.01em;
   scroll-margin: 40px;
 }
 

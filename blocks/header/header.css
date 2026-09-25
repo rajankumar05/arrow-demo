@@ -137,10 +137,16 @@ header .nav-brand {
   letter-spacing: 0.02em;
 }
 
+/* the brand link renders as the Arrow wordmark; its text stays as the accessible name */
 header .nav-brand a:any-link {
+  display: block;
+  width: 96px;
+  height: 20px;
+  overflow: hidden;
+  background: url('/icons/arrow-logo.svg') left center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
   text-decoration: none;
-  color: #fff;
-  text-transform: uppercase;
 }
 
 header nav .nav-brand img {
@@ -270,6 +276,26 @@ header nav .nav-tools {
 
 header nav .nav-tools p {
   display: inline-block;
+  white-space: nowrap;
+}
+
+/* the links sit in a wrapper, so space them there */
+header nav .nav-tools .default-content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* narrow screens: the cart shows just its icon and count; the link text stays
+   as the accessible name */
+@media (width < 900px) {
+  header nav .nav-tools .nav-cart {
+    font-size: 0;
+  }
+
+  header nav .nav-tools .nav-cart-count {
+    font-size: 11px;
+  }
 }
 
 /* cart link with icon + count badge */
@@ -449,6 +475,11 @@ header nav .nav-tools .nav-cart-count {
     align-self: center;
   }
 
+  header .nav-brand a:any-link {
+    width: 139px;
+    height: 29px;
+  }
+
   header .nav-brand p:first-child {
     flex: 0 0 auto;
   }
@@ -456,6 +487,10 @@ header nav .nav-tools .nav-cart-count {
   header nav .nav-tools {
     padding: 0 32px 0 0;
     align-self: center;
+  }
+
+  header nav .nav-tools .default-content-wrapper {
+    gap: 36px;
   }
 
   /* main nav bar: slightly lifted dark band spanning full width */
@@ -480,7 +515,7 @@ header nav .nav-tools .nav-cart-count {
   header nav .nav-sections .default-content-wrapper > ul > li {
     flex: 0 1 auto;
     position: relative;
-    padding: 14px 0;
+    padding-block: 14px; /* block only: keep the dropdown items' right padding for the arrow */
   }
 
   /* blue underline under nav items except the first (Electronic Components) */
