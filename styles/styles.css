@@ -44,18 +44,36 @@
   --nav-height: 64px;
 }
 
-/* fallback fonts: Arial scaled to Red Hat Text's width (measured) so text doesn't
-   shift when the web font loads */
+/* fallback fonts: Arial scaled to Red Hat Text's width so text doesn't re-wrap (and
+   shift the layout) when the web font loads. Measured on this site's own text against
+   Arial-metric glyphs: regular weights with Arial, bold weights with Arial Bold (a single
+   regular face would be faux-bolded, which is narrower and needs a different scale) */
 @font-face {
   font-family: red-hat-text-heading-fallback;
-  size-adjust: 84.5%;
-  src: local('Arial');
+  font-weight: 100 500;
+  size-adjust: 100%;
+  src: local('Arial'), local('ArialMT');
+}
+
+@font-face {
+  font-family: red-hat-text-heading-fallback;
+  font-weight: 600 900;
+  size-adjust: 103.2%;
+  src: local('Arial Bold'), local('Arial-BoldMT');
 }
 
 @font-face {
   font-family: red-hat-text-fallback;
-  size-adjust: 88.16%;
-  src: local('Arial');
+  font-weight: 100 500;
+  size-adjust: 100%;
+  src: local('Arial'), local('ArialMT');
+}
+
+@font-face {
+  font-family: red-hat-text-fallback;
+  font-weight: 600 900;
+  size-adjust: 101.5%;
+  src: local('Arial Bold'), local('Arial-BoldMT');
 }
 
 @media (width >= 900px) {
