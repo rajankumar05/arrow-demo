@@ -376,11 +376,15 @@ main .section.centered .default-content-wrapper {
   margin-right: auto;
 }
 
-/* the trailing image at the end of the stories section becomes a full-bleed
-   background band that the stats panel overlaps */
+/* the trailing image at the end of the stories section is the backdrop the
+   stats panel overlaps; it keeps the content width, below the story cards */
+main .section.cards-story-container {
+  margin-bottom: 0;
+}
+
 main .section.cards-story-container .default-content-wrapper:last-child {
-  margin: 0;
-  max-width: none;
+  max-width: 1200px; /* not the narrower centred-intro width */
+  margin-top: 64px;
   line-height: 0;
 }
 
@@ -390,57 +394,62 @@ main .section.cards-story-container .default-content-wrapper:last-child picture 
 
 main .section.cards-story-container .default-content-wrapper:last-child img {
   width: 100%;
-  height: 360px;
+  height: auto;
+  aspect-ratio: 2.2 / 1;
   object-fit: cover;
   display: block;
 }
 
-/* stats section: white panel overlapping the image band above, heading + CTA
-   on the left, stat grid on the right, with breathing room after */
+/* stats section: the whole section is a white panel, centred on the image band
+   and overlapping its lower edge; heading + CTA left, stat grid right */
 main .section.stats {
-  background-color: transparent;
-  margin: 0 0 64px;
-  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: 0 auto 64px;
+  padding: 40px 24px;
+  background-color: var(--background-color);
 }
 
 main .section.stats > div {
-  background-color: var(--background-color);
-  max-width: 1200px;
-  margin: -140px auto 0;
-  padding: 48px 24px;
-  position: relative;
-  z-index: 1;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+main .section.stats .columns-stats-wrapper {
+  margin-top: 40px;
 }
 
 @media (width >= 900px) {
-  main .section.stats > div {
+  main .section.stats {
     display: grid;
-    grid-template-columns: 1fr 1.4fr;
+    grid-template-columns: 5fr 7fr;
     gap: 48px;
     align-items: start;
-    padding: 56px 48px;
-  }
-
-  main .section.stats .default-content-wrapper {
-    margin: 0;
+    margin-top: -156px;
+    padding: 88px 100px 64px;
   }
 
   main .section.stats .columns-stats-wrapper {
-    margin: 0;
+    margin-top: 0;
   }
 }
 
 /* the left column heading + button */
 main .section.stats .default-content-wrapper h2 {
-  font-size: var(--heading-font-size-xl);
+  margin: 0;
+  font-size: 28px;
   font-weight: 700;
-  margin-top: 0;
+  line-height: 1.07;
 }
 
 main .section.stats .default-content-wrapper a {
   display: inline-block;
-  margin-top: 16px;
-  padding: 14px 24px;
+  margin-top: 12px;
+  padding: 12px 18px;
+  font-size: 14px;
   background-color: var(--accent-color);
   color: #fff;
   font-weight: 700;

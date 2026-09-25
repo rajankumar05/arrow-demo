@@ -1,7 +1,7 @@
 .columns-stats > div {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px 48px;
+  grid-template-columns: repeat(2, minmax(0, 186px));
+  gap: 40px 54px;
 }
 
 .columns-stats .columns-stats-item {
@@ -9,27 +9,22 @@
   flex-direction: column;
 }
 
-/* big dark number */
+/* big dark number over a thick blue rule */
 .columns-stats .columns-stats-item h1,
 .columns-stats .columns-stats-item h2,
 .columns-stats .columns-stats-item h3 {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   padding-bottom: 12px;
-  font-size: var(--heading-font-size-xl);
+  font-size: 28px;
   font-weight: 700;
   line-height: 1;
   color: var(--text-color);
-  border-bottom: 3px solid var(--accent-color);
+  border-bottom: 5px solid var(--accent-color);
 }
 
 .columns-stats .columns-stats-item p {
   margin: 0;
   color: var(--text-color);
-  font-size: var(--body-font-size-xs);
-}
-
-@media (width >= 600px) {
-  .columns-stats > div {
-    gap: 40px 64px;
-  }
+  font-size: 14px;
+  line-height: 1.45;
 }
