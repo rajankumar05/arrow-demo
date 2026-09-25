@@ -39,10 +39,24 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
 
 // --- BEGIN DM/Scene7 auto-block (excat-generated) ---
 
+// each source offers a width set capped at its old single width, so no device gets a bigger
+// file; `sizes` lets the browser pick the smallest one that fits
 const DM_BREAKPOINTS = [
-  { media: '(min-width: 600px)', width: 2000 }, // desktop
-  { width: 750 }, // mobile / fallback (no media)
+  {
+    name: 'desktop', media: '(min-width: 600px)', width: 2000, widths: [750, 1000, 1500, 2000], sizes: '100vw',
+  },
+  // mobile / fallback (no media): below 600px content sits inside the sections' 24px side padding
+  {
+    name: 'mobile', width: 750, widths: [480, 640, 750], sizes: 'calc(100vw - 48px)',
+  },
 ];
+
+// how wide some blocks render their images, per breakpoint. It has to be known when the
+// picture is built: the first image is fetched before its block loads, so the block can't
+// set `sizes` itself without the browser downloading a second file.
+const DM_BLOCK_SIZES = {
+  'carousel-hero': { desktop: '(min-width: 1280px) 607px, (min-width: 900px) 48vw, calc(100vw - 48px)' },
+};
 
 // ---- Canonical helpers (keep in sync with dm-scene7-helpers.js) ----
 function detectDynamicMediaUrl(urlStr) {
@@ -59,6 +73,9 @@ function detectDynamicMediaUrl(urlStr) {
   return false;
 }
 
+// webp at 75 looks the same as the authored 85 at these sizes and is ~27% smaller
+const DM_QUALITY = 75;
+
 function buildScene7Rendition(src, { width, format }) {
   const normalized = src.startsWith('//') ? `https:${src}` : src;
   const qIdx = normalized.indexOf('?');
@@ -67,8 +84,9 @@ function buildScene7Rendition(src, { width, format }) {
   const pairs = query.split('&').filter((p) => p);
   const filtered = pairs.filter((p) => {
     const k = p.split('=')[0];
-    return k !== 'wid' && k !== 'fmt';
+    return k !== 'wid' && k !== 'fmt' && k !== 'qlt';
   });
+  filtered.push(`qlt=${DM_QUALITY}`);
   filtered.push(`wid=${width}`);
   filtered.push(`fmt=${format}`);
   return `${base}?${filtered.join('&')}`;
@@ -103,58 +121,76 @@ function linkTextToAlt(linkText) {
 }
 
 // ---- Rendering ----
-function appendSource(picture, { type, srcset, media }) {
+function appendSource(picture, {
+  type, srcset, sizes, media,
+}) {
   const source = document.createElement('source');
   if (type) source.type = type;
   source.srcset = srcset;
+  if (sizes) source.sizes = sizes;
   if (media) source.setAttribute('media', media);
   picture.append(source);
 }
 
-function renderScene7Picture(src, alt) {
+function buildScene7Srcset(src, bp, format) {
+  if (!bp.widths) return buildScene7Rendition(src, { width: bp.width, format });
+  return bp.widths
+    .map((width) => `${buildScene7Rendition(src, { width, format })} ${width}w`)
+    .join(', ');
+}
+
+function renderScene7Picture(src, alt, eager = false, blockSizes = {}) {
   const picture = document.createElement('picture');
-  DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
-    type: 'image/webp',
-    srcset: buildScene7Rendition(src, { width: bp.width, format: 'webp' }),
+  ['webp', 'jpg'].forEach((format) => DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
+    type: format === 'webp' ? 'image/webp' : 'image/jpeg',
+    srcset: buildScene7Srcset(src, bp, format),
+    sizes: blockSizes[bp.name] || bp.sizes,
     media: bp.media,
-  }));
-  DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
-    type: 'image/jpeg',
-    srcset: buildScene7Rendition(src, { width: bp.width, format: 'jpg' }),
-    media: bp.media,
-  }));
+  })));
   const img = document.createElement('img');
+  img.loading = eager ? 'eager' : 'lazy';
+  if (eager) img.fetchPriority = 'high';
   img.src = buildScene7Rendition(src, { width: 750, format: 'jpg' });
   img.alt = alt;
-  img.loading = 'lazy';
   picture.append(img);
   return picture;
 }
 
-function renderDmOpenApiPicture(src, alt) {
+function renderDmOpenApiPicture(src, alt, eager = false) {
   const picture = document.createElement('picture');
   DM_BREAKPOINTS.forEach((bp) => appendSource(picture, {
     srcset: buildDmOpenApiRendition(src, { width: bp.width }),
     media: bp.media,
   }));
   const img = document.createElement('img');
+  img.loading = eager ? 'eager' : 'lazy';
+  if (eager) img.fetchPriority = 'high';
   img.src = buildDmOpenApiRendition(src, { width: 750 });
   img.alt = alt;
-  img.loading = 'lazy';
   picture.append(img);
   return picture;
 }
 
 function buildDynamicMediaImages(main) {
+  // the first image on the page is the LCP candidate: fetch it now, at high priority,
+  // rather than after the blocks load
+  let first = true;
+  const authoredImg = main.querySelector('img');
   main.querySelectorAll('a').forEach((a) => {
     const match = findDmOnAnchor(a);
     if (!match) return;
 
     const { mode, dmUrl } = match;
     const alt = linkTextToAlt(a.textContent.trim());
+    const eager = first && (!authoredImg
+      // eslint-disable-next-line no-bitwise
+      || !!(a.compareDocumentPosition(authoredImg) & Node.DOCUMENT_POSITION_FOLLOWING));
+    first = false;
+    // blocks aren't decorated yet: the block is the classed div directly in the section
+    const block = a.closest('main > div > div[class]');
     const picture = detectDynamicMediaUrl(dmUrl) === 'scene7'
-      ? renderScene7Picture(dmUrl, alt)
-      : renderDmOpenApiPicture(dmUrl, alt);
+      ? renderScene7Picture(dmUrl, alt, eager, DM_BLOCK_SIZES[block?.classList[0]])
+      : renderDmOpenApiPicture(dmUrl, alt, eager);
 
     a.classList.remove('button', 'primary', 'secondary');
     if (a.classList.length === 0) a.removeAttribute('class');

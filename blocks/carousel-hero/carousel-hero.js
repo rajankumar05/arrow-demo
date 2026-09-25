@@ -177,9 +177,19 @@ export default function decorate(block) {
 
   // optimize slide images; the first slide is the LCP image so load it eagerly
   block.querySelectorAll('.carousel-hero-slide-image picture > img').forEach((img, idx) => {
-    img.closest('picture').replaceWith(
-      createOptimizedPicture(img.src, img.alt, idx === 0, [{ width: '1600' }]),
-    );
+    let picture = img.closest('picture');
+    // Dynamic Media pictures are already responsive (and the first may be downloading):
+    // rebuilding them would drop their sizing and fetch the image again
+    if (!picture.querySelector('source')) {
+      const optimized = createOptimizedPicture(img.src, img.alt, idx === 0, [{ width: '1600' }]);
+      picture.replaceWith(optimized);
+      picture = optimized;
+    }
+    if (idx === 0) {
+      const lcpImg = picture.querySelector('img');
+      lcpImg.loading = 'eager';
+      lcpImg.fetchPriority = 'high';
+    }
   });
 
   if (!isSingleSlide) {
