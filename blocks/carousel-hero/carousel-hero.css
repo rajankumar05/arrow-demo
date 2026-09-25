@@ -43,9 +43,12 @@
   display: block;
 }
 
+/* stacked (mobile) layout: reserve the image's box so the heading and text below
+   don't jump when the image arrives; the image is cropped to fill it */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
 }
 
@@ -80,6 +83,7 @@
 
 /* CTA rendered as an Arrow-blue solid button */
 .carousel-hero .carousel-hero-slide-content a {
+  display: inline-block; /* keep the button one box when its text wraps */
   align-self: flex-start;
   margin-top: 8px;
   padding: 14px 24px;
@@ -150,8 +154,9 @@
 .carousel-hero .carousel-hero-slide-indicators {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  grid-auto-columns: minmax(0, 1fr); /* let tabs shrink below their longest word */
   flex: 1 1 auto;
+  min-width: 0;
   gap: 0;
 }
 
@@ -202,6 +207,23 @@
   border-top-color: rgb(255 255 255 / 60%);
 }
 
+/* narrow screens: four labelled tabs don't fit, so show the numbers only; the
+   button's aria-label still carries the full slide name */
+@media (width < 600px) {
+  .carousel-hero .carousel-hero-slide-indicator button {
+    padding-right: 8px;
+  }
+
+  .carousel-hero .carousel-hero-indicator-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 @media (width >= 900px) {
   .carousel-hero .carousel-hero-slide {
     flex-direction: row;
@@ -219,6 +241,11 @@
   .carousel-hero .carousel-hero-slide .carousel-hero-slide-image {
     order: 1;
     flex: 1 1 55%;
+  }
+
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
+    height: 100%;
+    aspect-ratio: auto;
   }
 
   .carousel-hero .carousel-hero-nav {
